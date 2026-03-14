@@ -16,6 +16,25 @@ driver = GraphDatabase.driver(
     )
 )
 
+neo4j_schema = """
+Node properties:
+Person {name: STRING, born: INTEGER}
+Movie {tagline: STRING, title: STRING, released: INTEGER}
+Genre {name: STRING}
+User {name: STRING}
+
+Relationship properties:
+ACTED_IN {role: STRING}
+RATED {rating: INTEGER}
+
+The relationships:
+(:Person)-[:ACTED_IN]->(:Movie)
+(:Person)-[:DIRECTED]->(:Movie)
+(:User)-[:RATED]->(:Movie)
+(:Movie)-[:IN_GENRE]->(:Genre)
+"""
+
+
 # Create LLM 
 t2c_llm = OpenAILLM(model_name="gpt-4.1-nano-2025-04-14", model_params={"temperature": 0})
 
@@ -26,7 +45,7 @@ examples = ["USER INPUT: 'Get user ratings for a movie?' QUERY: MATCH (u:User)-[
             ]
 
 # Build the retriever
-retriever = Text2CypherRetriever(driver, t2c_llm, examples=examples)
+retriever = Text2CypherRetriever(driver, t2c_llm, examples=examples, neo4j_schema=neo4j_schema)
 
 llm = OpenAILLM(model_name="gpt-4o")
 rag = GraphRAG(retriever=retriever, llm=llm)
@@ -36,7 +55,7 @@ query_text_2 = "What is the average user rating for the movie Toy Story?" # MODE
 query_text_3 = "What user gives the lowest ratings?" # MODEL OUTPUT: User with userId '6' gives the lowest ratings with a rating of 0.5.
 
 response = rag.search(
-    query_text=query_text_3,
+    query_text=query_text_1,
     return_context=True
     )
 
