@@ -20,8 +20,10 @@ driver = GraphDatabase.driver(
 t2c_llm = OpenAILLM(model_name="gpt-4.1-nano-2025-04-14", model_params={"temperature": 0})
 
 
-examples = ["USER INPUT: List 5 Horror Movies QUERY: MATCH (m:Movie)-[:IN_GENRE]->(g:Genre {name: 'Horror'}) RETURN m LIMIT 5;",
-            "USER INPUT: 'Get user ratings for a movie?' QUERY: MATCH (u:User)-[r:RATED]->(m:Movie) WHERE m.title = 'Movie Title' RETURN r.rating"]
+examples = ["USER INPUT: 'Get user ratings for a movie?' QUERY: MATCH (u:User)-[r:RATED]->(m:Movie) WHERE m.title = 'Movie Title' RETURN r.rating",
+            "USER INPUT: 'Get the average user rating for a movie' QUERY: MATCH (u:User)-[r:RATED]->(m:Movie {title: 'Movie Title'}) RETURN avg(r.rating)",
+            "USER INPUT: 'Get the lowest rating for a movie' QUERY: MATCH (u:User)-[r:RATED]->(m:Movie {title: 'Movie Title'}) RETURN min(r.rating)"
+            ]
 
 # Build the retriever
 retriever = Text2CypherRetriever(driver, t2c_llm, examples=examples)
@@ -29,10 +31,12 @@ retriever = Text2CypherRetriever(driver, t2c_llm, examples=examples)
 llm = OpenAILLM(model_name="gpt-4o")
 rag = GraphRAG(retriever=retriever, llm=llm)
 
-query_text = "Who is the director of Toy Story?"
+query_text_1 = "What is the highest rating for Goodfellas?" # MODEL OUTPUT: The highest rating for Goodfellas is 5.0.
+query_text_2 = "What is the average user rating for the movie Toy Story?" # MODEL OUTPUT: The average user rating for the movie Toy Story is 3.87
+query_text_3 = "What user gives the lowest ratings?" # MODEL OUTPUT: User with userId '6' gives the lowest ratings with a rating of 0.5.
 
 response = rag.search(
-    query_text=query_text,
+    query_text=query_text_3,
     return_context=True
     )
 
