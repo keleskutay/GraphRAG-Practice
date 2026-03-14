@@ -5,6 +5,7 @@ load_dotenv()
 from neo4j import GraphDatabase
 from neo4j_graphrag.embeddings.openai import OpenAIEmbeddings
 from neo4j_graphrag.retrievers import VectorRetriever
+from neo4j_graphrag.llm import OpenAILLM
 
 # Connect to Neo4j database
 driver = GraphDatabase.driver(
@@ -28,6 +29,7 @@ retriever = VectorRetriever(
 )
 
 # Create the LLM
+llm = OpenAILLM(model_name="gpt-5-mini-2025-08-07", model_params={"temperature": 1})
 
 # Create GraphRAG pipeline
 
