@@ -30,7 +30,7 @@ retriever = VectorRetriever(
 )
 
 # Create the LLM
-llm = OpenAILLM(model_name="gpt-5-mini-2025-08-07", model_params={"temperature": 1})
+llm = OpenAILLM(model_name="gpt-5-mini-2025-08-07", model_params={"temperature": 0})
 
 # Create GraphRAG pipeline
 rag = GraphRAG(retriever=retriever, llm=llm)
