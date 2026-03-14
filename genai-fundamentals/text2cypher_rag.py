@@ -20,8 +20,11 @@ driver = GraphDatabase.driver(
 t2c_llm = OpenAILLM(model_name="gpt-4.1-nano-2025-04-14", model_params={"temperature": 0})
 
 
+examples = ["USER INPUT: List 5 Horror Movies QUERY: MATCH (m:Movie)-[:IN_GENRE]->(g:Genre {name: 'Horror'}) RETURN m LIMIT 5;",
+            "USER INPUT: 'Get user ratings for a movie?' QUERY: MATCH (u:User)-[r:RATED]->(m:Movie) WHERE m.title = 'Movie Title' RETURN r.rating"]
+
 # Build the retriever
-retriever = Text2CypherRetriever(driver, t2c_llm)
+retriever = Text2CypherRetriever(driver, t2c_llm, examples=examples)
 
 llm = OpenAILLM(model_name="gpt-4o")
 rag = GraphRAG(retriever=retriever, llm=llm)
