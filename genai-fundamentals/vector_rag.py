@@ -6,6 +6,7 @@ from neo4j import GraphDatabase
 from neo4j_graphrag.embeddings.openai import OpenAIEmbeddings
 from neo4j_graphrag.retrievers import VectorRetriever
 from neo4j_graphrag.llm import OpenAILLM
+from neo4j_graphrag.generation import GraphRAG
 
 # Connect to Neo4j database
 driver = GraphDatabase.driver(
@@ -32,6 +33,7 @@ retriever = VectorRetriever(
 llm = OpenAILLM(model_name="gpt-5-mini-2025-08-07", model_params={"temperature": 1})
 
 # Create GraphRAG pipeline
+rag = GraphRAG(retriever=retriever, llm=llm)
 
 # Search 
 
