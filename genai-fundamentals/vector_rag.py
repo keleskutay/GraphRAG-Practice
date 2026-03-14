@@ -36,6 +36,16 @@ llm = OpenAILLM(model_name="gpt-5-mini-2025-08-07", model_params={"temperature":
 rag = GraphRAG(retriever=retriever, llm=llm)
 
 # Search 
+query_text = "Find me movies about love"
+
+response = rag.search(
+    query_text=query_text, 
+    retriever_config={"top_k": 5},
+    return_context=True
+)
+
+print(response.answer)
+print(response.retriever_result.items)
 
 # CLose the database connection
 driver.close()
