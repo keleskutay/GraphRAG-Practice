@@ -4,6 +4,7 @@ load_dotenv()
 
 from neo4j import GraphDatabase
 from neo4j_graphrag.llm import OpenAILLM
+from neo4j_graphrag.llm import OllamaLLM
 from neo4j_graphrag.generation import GraphRAG
 from neo4j_graphrag.retrievers import Text2CypherRetriever
 
@@ -36,7 +37,8 @@ The relationships:
 
 
 # Create LLM 
-t2c_llm = OpenAILLM(model_name="gpt-4.1-nano-2025-04-14", model_params={"temperature": 0})
+t2c_llama = OllamaLLM(model_name="llama3:latest",model_params={"temperature": 0})
+#t2c_llm = OpenAILLM(model_name="gpt-4.1-nano-2025-04-14", model_params={"temperature": 0})
 
 
 examples = ["USER INPUT: 'Get user ratings for a movie?' QUERY: MATCH (u:User)-[r:RATED]->(m:Movie) WHERE m.title = 'Movie Title' RETURN r.rating",
@@ -45,7 +47,7 @@ examples = ["USER INPUT: 'Get user ratings for a movie?' QUERY: MATCH (u:User)-[
             ]
 
 # Build the retriever
-retriever = Text2CypherRetriever(driver, t2c_llm, examples=examples, neo4j_schema=neo4j_schema)
+retriever = Text2CypherRetriever(driver, t2c_llama, examples=examples, neo4j_schema=neo4j_schema)
 
 llm = OpenAILLM(model_name="gpt-4o")
 rag = GraphRAG(retriever=retriever, llm=llm)
